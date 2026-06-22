@@ -62,6 +62,7 @@ window.addEventListener('DOMContentLoaded', () => {
         AppState.apiKey = savedKey;
         elements.geminiKey.value = savedKey;
         updateKeyStatusIndicator(true);
+        loadAvailableModels(); // Fetch dynamic models from API
     } else {
         updateKeyStatusIndicator(false);
     }
@@ -131,11 +132,58 @@ function saveApiKey() {
         AppState.apiKey = '';
         updateKeyStatusIndicator(false);
         showToast("API Key cleared", true);
+        elements.geminiModel.innerHTML = `
+            <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
+            <option value="gemini-3.5-pro">Gemini 3.5 Pro</option>
+            <option value="gemini-3.1-pro">Gemini 3.1 Pro</option>
+        `;
     } else {
         localStorage.setItem('algolens_gemini_key', key);
         AppState.apiKey = key;
         updateKeyStatusIndicator(true);
         showToast("API Key saved successfully");
+        loadAvailableModels();
+    }
+}
+
+// Dynamically retrieve and load only the models supported by the saved key
+async function loadAvailableModels() {
+    if (!AppState.apiKey) return;
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${AppState.apiKey}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        
+        // Filter models that support content generation
+        const activeModels = data.models
+            .filter(m => m.supportedMethods && m.supportedMethods.some(method => method.toLowerCase().includes('generatecontent')))
+            .map(m => m.name.replace('models/', ''));
+            
+        if (activeModels.length === 0) return;
+
+        // Populate the dropdown dynamically
+        elements.geminiModel.innerHTML = '';
+        activeModels.forEach(modelId => {
+            const option = document.createElement('option');
+            option.value = modelId;
+            // Format name cleanly: gemini-3.5-flash -> Gemini 3.5 Flash
+            const nameParts = modelId.split('-').map(p => {
+                if (p === 'exp') return 'Experimental';
+                return p.charAt(0).toUpperCase() + p.slice(1);
+            });
+            option.innerText = nameParts.join(' ');
+            elements.geminiModel.appendChild(option);
+        });
+        
+        // Restore last selected model preference
+        const savedModel = localStorage.getItem('algolens_gemini_model');
+        if (savedModel && activeModels.includes(savedModel)) {
+            elements.geminiModel.value = savedModel;
+        } else if (activeModels.includes('gemini-3.5-flash')) {
+            elements.geminiModel.value = 'gemini-3.5-flash';
+        }
+    } catch (e) {
+        console.error("Failed to load dynamic model list:", e);
     }
 }
 
