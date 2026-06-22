@@ -694,7 +694,16 @@ function updateLogsList(currentIdx, message) {
     }
     
     logEl.classList.add('active');
-    logEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const container = elements.logsContainer;
+    if (container) {
+        const parentRect = container.getBoundingClientRect();
+        const childRect = logEl.getBoundingClientRect();
+        const relativeTop = childRect.top - parentRect.top + container.scrollTop;
+        container.scrollTo({
+            top: relativeTop - container.clientHeight / 2 + logEl.clientHeight / 2,
+            behavior: 'smooth'
+        });
+    }
 }
 
 
