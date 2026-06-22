@@ -1,7 +1,7 @@
-// ==========================================================================
-// AlgoLens Main Controller Logic
-// Integrates with Gemini API, executes JS runner, and drives playback.
-// ==========================================================================
+
+
+
+
 
 const AppState = {
     apiKey: '',
@@ -16,7 +16,7 @@ const AppState = {
     isPlaying: false
 };
 
-// DOM Elements Cache
+
 const elements = {
     geminiKey: document.getElementById('gemini-key'),
     saveKeyBtn: document.getElementById('save-key-btn'),
@@ -54,20 +54,20 @@ const elements = {
     toast: document.getElementById('toast-message')
 };
 
-// Initial Setup on Page Load
+
 window.addEventListener('DOMContentLoaded', () => {
-    // Load Saved API Key
+    
     const savedKey = localStorage.getItem('algolens_gemini_key');
     if (savedKey) {
         AppState.apiKey = savedKey;
         elements.geminiKey.value = savedKey;
         updateKeyStatusIndicator(true);
-        loadAvailableModels(); // Fetch dynamic models from API
+        loadAvailableModels(); 
     } else {
         updateKeyStatusIndicator(false);
     }
     
-    // Load saved Lang and Model
+    
     const savedLang = localStorage.getItem('algolens_solution_lang');
     if (savedLang) {
         elements.solutionLang.value = savedLang;
@@ -77,7 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
         elements.geminiModel.value = savedModel;
     }
     
-    // Bind Event Listeners
+    
     elements.saveKeyBtn.addEventListener('click', saveApiKey);
     elements.transpileBtn.addEventListener('click', transpileSolution);
     elements.runBtn.addEventListener('click', executeTrace);
@@ -92,7 +92,7 @@ window.addEventListener('DOMContentLoaded', () => {
     
     elements.speedSlider.addEventListener('input', (e) => {
         const val = parseFloat(e.target.value);
-        // speed scale: 1 is slowest (2s), 10 is fastest (100ms)
+        
         const delay = Math.max(100, 2000 - (val - 1) * 200);
         AppState.playbackSpeedMs = delay;
         elements.speedValue.innerText = `${(1000 / delay).toFixed(1)}x`;
@@ -111,7 +111,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Toast Helper
+
 function showToast(message, isError = false) {
     elements.toast.innerText = message;
     elements.toast.className = 'toast';
@@ -124,7 +124,7 @@ function showToast(message, isError = false) {
     }, 3000);
 }
 
-// API Key Storage
+
 function saveApiKey() {
     const key = elements.geminiKey.value.trim();
     if (!key) {
@@ -145,7 +145,7 @@ function saveApiKey() {
     }
 }
 
-// Dynamically retrieve and load only the models supported by the saved key
+
 async function loadAvailableModels() {
     if (!AppState.apiKey) return;
     try {
@@ -153,19 +153,19 @@ async function loadAvailableModels() {
         if (!response.ok) return;
         const data = await response.json();
         
-        // Filter models that support content generation
+        
         const activeModels = data.models
             .filter(m => m.supportedMethods && m.supportedMethods.some(method => method.toLowerCase().includes('generatecontent')))
             .map(m => m.name.replace('models/', ''));
             
         if (activeModels.length === 0) return;
 
-        // Populate the dropdown dynamically
+        
         elements.geminiModel.innerHTML = '';
         activeModels.forEach(modelId => {
             const option = document.createElement('option');
             option.value = modelId;
-            // Format name cleanly: gemini-3.5-flash -> Gemini 3.5 Flash
+            
             const nameParts = modelId.split('-').map(p => {
                 if (p === 'exp') return 'Experimental';
                 return p.charAt(0).toUpperCase() + p.slice(1);
@@ -185,7 +185,7 @@ async function loadAvailableModels() {
             elements.geminiModel.appendChild(option);
         });
         
-        // Restore last selected model preference
+        
         const savedModel = localStorage.getItem('algolens_gemini_model');
         if (savedModel && activeModels.includes(savedModel)) {
             elements.geminiModel.value = savedModel;
@@ -207,7 +207,7 @@ function updateKeyStatusIndicator(hasKey) {
     }
 }
 
-// LeetCode level-order tree parser helper
+
 function parseLeetCodeTree(arr) {
     if (!arr || arr.length === 0 || arr[0] === null) return null;
     const root = { val: arr[0], left: null, right: null };
@@ -231,7 +231,7 @@ function parseLeetCodeTree(arr) {
     return root;
 }
 
-// Gemini Integration: Transpile solution to instrumented Javascript
+
 async function transpileSolution() {
     if (!AppState.apiKey) {
         showToast("Please enter and save a Gemini API Key first", true);
@@ -248,7 +248,7 @@ async function transpileSolution() {
         return;
     }
 
-    // Save configurations
+    
     localStorage.setItem('algolens_solution_lang', lang);
     localStorage.setItem('algolens_gemini_model', model);
     
@@ -326,97 +326,137 @@ For complex structures:
 Format your output exactly matching the JSON Schema provided.
 `;
 
-    try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${AppState.apiKey}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [
-                    {
-                        role: "user",
-                        parts: [{ text: promptText }]
-                    }
-                ],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            javascriptCode: {
-                                type: "STRING",
-                                description: "The runnable JavaScript function body that performs the algorithm and returns { result, trace }."
-                            },
-                            uiConfig: {
-                                type: "OBJECT",
-                                properties: {
-                                    type: {
-                                        type: "STRING",
-                                        enum: ["array", "matrix", "tree", "graph", "disjoint-set", "stack"]
-                                    },
-                                    args: {
-                                        type: "ARRAY",
-                                        items: {
-                                            type: "OBJECT",
-                                            properties: {
-                                                name: { type: "STRING" },
-                                                type: {
-                                                    type: "STRING",
-                                                    enum: ["array", "matrix", "tree", "graph", "number", "string"]
-                                                },
-                                                placeholder: { type: "STRING" }
-                                            },
-                                            required: ["name", "type"]
-                                        }
-                                    }
-                                },
-                                required: ["type", "args"]
-                            },
-                            formattedSourceCode: {
-                                type: "STRING",
-                                description: "The clean source code to display, line-by-line. Each line mapped from trace.line values."
-                            }
-                        },
-                        required: ["javascriptCode", "uiConfig", "formattedSourceCode"]
-                    }
-                }
-            })
-        });
+    
+    let attempt = 0;
+    let parsedResult = null;
+    let currentModel = model;
+    
+    
+    const availableModelOptions = Array.from(elements.geminiModel.options).map(opt => opt.value);
+    const backupModels = availableModelOptions.filter(m => m !== model);
+    const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-        if (!response.ok) {
-            const errBody = await response.text();
-            let errorMsg = `API error: ${response.status} - `;
-            if (response.status === 503) {
-                errorMsg += "Gemini model is currently overloaded/unavailable. Please try switching the Gemini Model dropdown (e.g. to Pro) or retry in a few seconds.";
-            } else {
-                errorMsg += errBody;
+    while (attempt < 3) {
+        try {
+            if (attempt > 0) {
+                showToast(`Retrying transpilation with ${currentModel} (Attempt ${attempt + 1}/3)...`, true);
             }
-            throw new Error(errorMsg);
-        }
+            
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${AppState.apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            role: "user",
+                            parts: [{ text: promptText }]
+                        }
+                    ],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                javascriptCode: {
+                                    type: "STRING",
+                                    description: "The runnable JavaScript function body that performs the algorithm and returns { result, trace }."
+                                },
+                                uiConfig: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        type: {
+                                            type: "STRING",
+                                            enum: ["array", "matrix", "tree", "graph", "disjoint-set", "stack"]
+                                        },
+                                        args: {
+                                            type: "ARRAY",
+                                            items: {
+                                                type: "OBJECT",
+                                                properties: {
+                                                    name: { type: "STRING" },
+                                                    type: {
+                                                        type: "STRING",
+                                                        enum: ["array", "matrix", "tree", "graph", "number", "string"]
+                                                    },
+                                                    placeholder: { type: "STRING" }
+                                                },
+                                                required: ["name", "type"]
+                                            }
+                                        }
+                                    },
+                                    required: ["type", "args"]
+                                },
+                                formattedSourceCode: {
+                                    type: "STRING",
+                                    description: "The clean source code to display, line-by-line. Each line mapped from trace.line values."
+                                }
+                            },
+                            required: ["javascriptCode", "uiConfig", "formattedSourceCode"]
+                        }
+                    }
+                })
+            });
 
-        const data = await response.json();
-        const responseText = data.candidates[0].content.parts[0].text;
-        const parsed = JSON.parse(responseText);
+            if (!response.ok) {
+                const errBody = await response.text();
+                let errorMsg = `API error ${response.status} - `;
+                if (response.status === 503) {
+                    errorMsg += "Gemini model overloaded/unavailable.";
+                } else if (response.status === 429) {
+                    errorMsg += "Rate limit exceeded (Too Many Requests).";
+                } else {
+                    errorMsg += errBody;
+                }
+                throw new Error(errorMsg);
+            }
+
+            const data = await response.json();
+            const responseText = data.candidates[0].content.parts[0].text;
+            parsedResult = JSON.parse(responseText);
+            break; 
+            
+        } catch (err) {
+            console.warn(`Attempt ${attempt + 1} failed:`, err);
+            attempt++;
+            
+            if (attempt < 3) {
+                
+                const nextModel = backupModels.shift();
+                if (nextModel) {
+                    currentModel = nextModel;
+                    
+                    elements.geminiModel.value = currentModel;
+                }
+                await sleep(2000);
+            } else {
+                
+                showToast("All retries failed. Gemini models are experiencing high load. Please try again in a few seconds.", true);
+                throw err;
+            }
+        }
+    }
+
+    try {
         
-        // Save to App State
-        AppState.javascriptCode = parsed.javascriptCode;
-        AppState.uiConfig = parsed.uiConfig;
-        AppState.formattedJavaCode = parsed.formattedSourceCode;
+        AppState.javascriptCode = parsedResult.javascriptCode;
+        AppState.uiConfig = parsedResult.uiConfig;
+        AppState.formattedJavaCode = parsedResult.formattedSourceCode;
         
-        // Render Source Code Panel
-        renderCodeTracer(parsed.formattedSourceCode);
         
-        // Render Run Parameters Section
-        renderInputForm(parsed.uiConfig.args);
+        renderCodeTracer(parsedResult.formattedSourceCode);
+        
+        
+        renderInputForm(parsedResult.uiConfig.args);
         
         showToast("Transpiled and ready to run!");
         
-        // Auto scroll sidebar to Step 2
+        
         setTimeout(() => {
             elements.testcaseSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }, 150);
     } catch (err) {
-        console.error("Transpilation failed:", err);
-        showToast(err.message.includes("503") ? "Gemini model overloaded (503). Try another model in the dropdown." : "Transpilation failed. Check console and API key.", true);
+        console.error("Transpilation processing error:", err);
+        showToast("Failed to process transpile result. Verify model output schema.", true);
     } finally {
         elements.transpileBtn.disabled = false;
         elements.transpileBtn.innerHTML = `
@@ -427,7 +467,7 @@ Format your output exactly matching the JSON Schema provided.
     }
 }
 
-// Generate Java Source Code Lines with Line Numbers
+
 function renderCodeTracer(javaCode) {
     elements.codeViewer.innerHTML = '';
     const lines = javaCode.split('\n');
@@ -451,7 +491,7 @@ function renderCodeTracer(javaCode) {
     });
 }
 
-// Draw dynamic run inputs based on the arguments list returned by Gemini
+
 function renderInputForm(args) {
     elements.dynamicInputs.innerHTML = '';
     
@@ -470,7 +510,7 @@ function renderInputForm(args) {
         } else {
             input = document.createElement('input');
             input.type = 'text';
-            // Provide intelligent defaults
+            
             if (arg.type === 'array') input.value = arg.placeholder || '[2, 7, 11, 15]';
             else if (arg.type === 'matrix') input.value = arg.placeholder || '[[1, 2], [3, 4]]';
             else if (arg.type === 'tree') input.value = arg.placeholder || '[3, 9, 20, null, null, 15, 7]';
@@ -489,14 +529,14 @@ function renderInputForm(args) {
     elements.testcaseSection.classList.remove('hidden');
 }
 
-// Local Execution: Compile and execute the JS code with current run parameters
+
 function executeTrace() {
     if (!AppState.javascriptCode) {
         showToast("No active transpiled solution. Click Transpile first.", true);
         return;
     }
     
-    // Parse Arguments
+    
     const parsedArgs = [];
     const argsConfig = AppState.uiConfig.args;
     
@@ -510,10 +550,10 @@ function executeTrace() {
             } else if (arg.type === 'string') {
                 parsedArgs.push(rawVal);
             } else {
-                // Must parse JSON (arrays, matrices, edge lists)
+                
                 let parsed = JSON.parse(rawVal);
                 if (arg.type === 'tree') {
-                    // Tree deserialization
+                    
                     parsed = parseLeetCodeTree(parsed);
                 }
                 parsedArgs.push(parsed);
@@ -525,12 +565,12 @@ function executeTrace() {
         return;
     }
     
-    // Reset Playback state
+    
     pausePlayback();
     AppState.trace = [];
     AppState.currentStepIdx = -1;
     
-    // Compile and run local JS Function
+    
     try {
         const runner = new Function('args', AppState.javascriptCode);
         const output = runner(parsedArgs);
@@ -543,7 +583,7 @@ function executeTrace() {
             return;
         }
         
-        // Enable Controls
+        
         elements.timelineSlider.disabled = false;
         elements.timelineSlider.max = AppState.trace.length - 1;
         elements.timelineSlider.min = 0;
@@ -557,10 +597,10 @@ function executeTrace() {
         elements.visualizerCanvas.classList.remove('hidden');
         elements.typeLabel.innerText = `${AppState.uiConfig.type.toUpperCase()} VISUALIZER`;
         
-        // Clear log window
+        
         elements.logsContainer.innerHTML = '';
         
-        // Show first step
+        
         jumpToStep(0);
         showToast("Algorithm trace generated. Start playback!");
     } catch (err) {
@@ -569,7 +609,7 @@ function executeTrace() {
     }
 }
 
-// Timeline navigation
+
 function jumpToStep(idx) {
     if (idx < 0 || idx >= AppState.trace.length) return;
     
@@ -579,26 +619,32 @@ function jumpToStep(idx) {
     
     const step = AppState.trace[idx];
     
-    // 1. Draw Visual structures
+    
     Visualizers.draw(step.visuals, elements.visualizerCanvas);
     
-    // 2. Set Explanation Text
+    
     elements.explanationText.innerText = step.explanation || "No explanation provided for this step.";
     
-    // 3. Highlight line in Code Tracer
+    
     const activeLine = document.querySelector('.code-line.active');
     if (activeLine) activeLine.classList.remove('active');
     
     const newLine = document.getElementById(`code-line-${step.line}`);
     if (newLine) {
         newLine.classList.add('active');
-        newLine.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const container = document.querySelector('.code-container-scroll');
+        if (container) {
+            container.scrollTo({
+                top: newLine.offsetTop - container.clientHeight / 2 + newLine.clientHeight / 2,
+                behavior: 'smooth'
+            });
+        }
     }
     
-    // 4. Update Variables Watch
+    
     updateVariablesWatch(step.variables || {});
     
-    // 5. Append step to logging list (highlighting current)
+    
     updateLogsList(idx, step.explanation);
 }
 
@@ -632,10 +678,10 @@ function updateVariablesWatch(vars) {
 }
 
 function updateLogsList(currentIdx, message) {
-    // Look if log element exists for this step
+    
     let logEl = document.getElementById(`log-step-${currentIdx}`);
     
-    // Remove active markers from all
+    
     const activeLog = document.querySelector('.log-entry.active');
     if (activeLog) activeLog.classList.remove('active');
     
@@ -651,7 +697,7 @@ function updateLogsList(currentIdx, message) {
     logEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// Stepping functions
+
 function stepForward() {
     if (AppState.currentStepIdx < AppState.trace.length - 1) {
         jumpToStep(AppState.currentStepIdx + 1);
@@ -667,7 +713,7 @@ function stepBackward() {
     }
 }
 
-// Auto-playback loop
+
 function togglePlayback() {
     if (AppState.isPlaying) {
         pausePlayback();
@@ -681,7 +727,7 @@ function startPlayback() {
     elements.playBtn.querySelector('.play-icon').classList.add('hidden');
     elements.playBtn.querySelector('.pause-icon').classList.remove('hidden');
     
-    // If at the end, restart from first step
+    
     if (AppState.currentStepIdx === AppState.trace.length - 1) {
         jumpToStep(0);
     }

@@ -1,47 +1,43 @@
-/* ==========================================================================
-   AlgoLens Premium Dark Industrial CSS stylesheet
-   Strictly NO shades of blue or violet.
-   Strictly NO glassmorphism (solid panels, solid colors, sharp high-contrast)
-   ========================================================================== */
+
 
 :root {
-    /* Color Palette */
-    --bg-main: #08090C;           /* Vanta-charcoal base background */
-    --bg-panel: #111318;          /* Solid Deep Charcoal panels */
-    --bg-element: #191C24;        /* Dark Grey for list items/buttons */
-    --bg-input: #0C0D11;          /* Vanta-black for editing areas */
-    --bg-active: #222631;         /* Hover/Selection states */
     
-    /* Borders */
-    --border-color: #252A36;      /* Solid crisp border color */
-    --border-highlight: #3A4254;  /* Hover border color */
+    --bg-main: #08090C;           
+    --bg-panel: #111318;          
+    --bg-element: #191C24;        
+    --bg-input: #0C0D11;          
+    --bg-active: #222631;         
     
-    /* Accents (Amber, Orange, Emerald, Rose) */
-    --accent-amber: #D97706;      /* Pointers, highlights - Dark Amber */
-    --accent-amber-light: #F59E0B;/* Light Amber */
+    
+    --border-color: #252A36;      
+    --border-highlight: #3A4254;  
+    
+    
+    --accent-amber: #D97706;      
+    --accent-amber-light: #F59E0B;
     --accent-amber-glow: rgba(245, 158, 11, 0.15);
     
-    --accent-orange: #EA580C;     /* Dynamic orange */
+    --accent-orange: #EA580C;     
     --accent-orange-light: #F97316;
     --accent-orange-glow: rgba(249, 115, 22, 0.15);
     
-    --accent-emerald: #059669;    /* Success, visited - Emerald */
+    --accent-emerald: #059669;    
     --accent-emerald-light: #10B981;
     --accent-emerald-glow: rgba(16, 185, 129, 0.12);
     
-    --accent-rose: #DC2626;       /* Deletions, errors - Crimson/Rose */
+    --accent-rose: #DC2626;       
     --accent-rose-light: #EF4444;
     
-    /* Text Colors */
-    --text-primary: #F8FAFC;      /* High contrast clean white */
-    --text-secondary: #94A3B8;    /* Muted Slate text */
-    --text-muted: #475569;        /* Deep muted Slate */
     
-    /* Fonts */
+    --text-primary: #F8FAFC;      
+    --text-secondary: #94A3B8;    
+    --text-muted: #475569;        
+    
+    
     --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-mono: 'Fira Code', source-code-pro, Menlo, Monaco, Consolas, monospace;
     
-    /* Spacings & Shadows */
+    
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
@@ -50,9 +46,7 @@
     --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.8);
 }
 
-/* ==========================================================================
-   Base resets & custom scrollbars
-   ========================================================================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -69,7 +63,7 @@ body {
     width: 100vw;
 }
 
-/* Custom Sleek Scrollbars */
+
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -88,9 +82,7 @@ body {
     background: var(--accent-amber-light);
 }
 
-/* ==========================================================================
-   App Layout
-   ========================================================================== */
+
 .app-container {
     display: flex;
     flex-direction: column;
@@ -98,7 +90,7 @@ body {
     width: 100vw;
 }
 
-/* Header */
+
 .app-header {
     display: flex;
     justify-content: space-between;
@@ -137,7 +129,7 @@ body {
     letter-spacing: 0.02em;
 }
 
-/* API Key inputs */
+
 .header-controls {
     display: flex;
     align-items: center;
@@ -176,7 +168,7 @@ body {
     box-shadow: 0 0 0 2px var(--accent-orange-glow);
 }
 
-/* Status Indicator */
+
 .status-indicator {
     padding: 0.3rem 0.6rem;
     border-radius: var(--radius-sm);
@@ -198,9 +190,7 @@ body {
     border: 1px solid var(--accent-emerald);
 }
 
-/* ==========================================================================
-   Main Grid Layout
-   ========================================================================== */
+
 .app-main-grid {
     display: grid;
     grid-template-columns: 360px 1fr;
@@ -208,7 +198,7 @@ body {
     overflow: hidden;
 }
 
-/* Sidebar Styling */
+
 .sidebar-panel {
     background-color: var(--bg-panel);
     border-right: 2px solid var(--border-color);
@@ -315,9 +305,7 @@ body {
     border: 0;
 }
 
-/* ==========================================================================
-   Workspace (Right column)
-   ========================================================================== */
+
 .workspace-panel {
     display: flex;
     flex-direction: column;
@@ -328,7 +316,7 @@ body {
     background-color: var(--bg-main);
 }
 
-/* Card base layout with top accent strip */
+
 .card {
     background-color: var(--bg-panel);
     border: 1px solid var(--border-color);
@@ -345,7 +333,7 @@ body {
     border-color: var(--border-highlight);
 }
 
-/* Card Header details */
+
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -363,7 +351,7 @@ body {
     color: var(--text-secondary);
 }
 
-/* Visualizer Canvas Card */
+
 .canvas-card {
     flex-grow: 1;
     min-height: 420px;
@@ -418,7 +406,7 @@ body {
     overflow: auto;
 }
 
-/* Badge Indicator */
+
 .visualizer-badge {
     display: flex;
     align-items: center;
@@ -440,9 +428,7 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* ==========================================================================
-   Playback Control Bar
-   ========================================================================== */
+
 .controls-card {
     padding: 1.25rem;
     gap: 1rem;
@@ -583,11 +569,11 @@ body {
     gap: 1rem;
 }
 
-/* Step Explanation Box */
+
 .step-explanation-box {
     display: flex;
     gap: 0.75rem;
-    background-color: #1e1910; /* Solid warm dark amber */
+    background-color: #1e1910; 
     border-left: 4px solid var(--accent-amber);
     padding: 0.85rem 1.25rem;
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
@@ -603,14 +589,12 @@ body {
 
 #explanation-text {
     font-size: 0.85rem;
-    color: #ffd894; /* Creamy high-contrast amber */
+    color: #ffd894; 
     line-height: 1.5;
     font-weight: 500;
 }
 
-/* ==========================================================================
-   Details Section: Code & Monitors
-   ========================================================================== */
+
 .workspace-details-grid {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -619,7 +603,7 @@ body {
     min-height: 320px;
 }
 
-/* Code Tracer Panel */
+
 .code-tracer-card {
     height: 100%;
     min-height: 320px;
@@ -665,9 +649,9 @@ body {
     white-space: pre;
 }
 
-/* Active Highlight Line */
+
 .code-line.active {
-    background-color: #231b0c; /* Deep solid amber background tint */
+    background-color: #231b0c; 
     border-left-color: var(--accent-amber-light);
 }
 
@@ -681,7 +665,7 @@ body {
     font-weight: 600;
 }
 
-/* Variables Monitor */
+
 .state-monitors {
     display: flex;
     flex-direction: column;
@@ -739,7 +723,7 @@ body {
     font-size: 0.8rem;
 }
 
-/* Logs Monitor */
+
 .log-card {
     flex-grow: 1.5;
     min-height: 160px;
@@ -779,9 +763,7 @@ body {
     margin-right: 0.5rem;
 }
 
-/* ==========================================================================
-   Visualizer Canvas: Internal Structures (Array, Matrix, SVG)
-   ========================================================================== */
+
 .array-container {
     display: flex;
     flex-wrap: wrap;
@@ -859,7 +841,7 @@ body {
     100% { transform: translateY(3px); }
 }
 
-/* Matrix layout styles */
+
 .matrix-container {
     display: flex;
     flex-direction: column;
@@ -910,9 +892,7 @@ body {
     box-shadow: 0 0 8px var(--accent-orange-glow);
 }
 
-/* ==========================================================================
-   SVG Visual Graph & Trees styles
-   ========================================================================== */
+
 .visual-node {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -970,9 +950,7 @@ body {
     stroke-width: 3px;
 }
 
-/* ==========================================================================
-   Buttons and inputs style sheets
-   ========================================================================== */
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -1080,9 +1058,7 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* ==========================================================================
-   Toast and Alerts
-   ========================================================================== */
+
 .toast {
     position: fixed;
     bottom: 24px;
@@ -1110,9 +1086,7 @@ body {
     border-left-color: var(--accent-emerald-light);
 }
 
-/* ==========================================================================
-   New Flex Sidebar Layout & Support for Select fields
-   ========================================================================== */
+
 .sidebar-panel {
     display: flex;
     flex-direction: column;
@@ -1181,4 +1155,85 @@ select:focus {
 select option {
     background-color: var(--bg-panel);
     color: var(--text-primary);
+}
+
+
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        height: auto;
+    }
+    
+    .app-container {
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .app-main-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+    }
+
+    .sidebar-panel {
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid var(--border-color);
+        overflow: visible;
+    }
+    
+    .panel-content.fill-container {
+        overflow-y: visible;
+        height: auto;
+    }
+
+    .workspace-panel {
+        height: auto;
+        overflow: visible;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .workspace-details-grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: auto;
+        gap: 1rem;
+    }
+
+    .code-tracer-card, .variable-watch-card, .log-card {
+        height: 280px;
+        min-height: 280px;
+    }
+
+    .playback-toolbar {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .toolbar-left, .toolbar-center, .toolbar-right {
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        flex: none;
+    }
+
+    .api-key-container {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .api-key-container input {
+        width: 100%;
+    }
+
+    .app-header {
+        height: auto;
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
 }

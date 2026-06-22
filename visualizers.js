@@ -1,13 +1,13 @@
-// ==========================================================================
-// AlgoLens Rendering Library
-// Contains visualization components using pure SVG and DOM structures.
-// Strict styling rules apply: Emerald for success/visited, Amber/Orange for active.
-// ==========================================================================
+
+
+
+
+
 
 const Visualizers = {
-    // ----------------------------------------------------------------------
-    // 1. Array Visualizer (Two Pointers, Sliding Window, Stack, Queue)
-    // ----------------------------------------------------------------------
+    
+    
+    
     renderArray(data, highlights, container) {
         container.innerHTML = '';
         
@@ -19,7 +19,7 @@ const Visualizers = {
         const active = highlights.active || [];
         const success = highlights.success || [];
         const selected = highlights.selected || [];
-        const windowRange = highlights.window || null; // e.g. { start: 2, end: 5 }
+        const windowRange = highlights.window || null; 
         
         arr.forEach((val, idx) => {
             const wrapper = document.createElement('div');
@@ -29,7 +29,7 @@ const Visualizers = {
             cell.className = 'array-cell';
             cell.innerText = typeof val === 'object' ? JSON.stringify(val) : val;
             
-            // Apply highlighting classes
+            
             if (active.includes(idx)) {
                 cell.classList.add('highlight-active');
             } else if (success.includes(idx)) {
@@ -38,7 +38,7 @@ const Visualizers = {
                 cell.classList.add('highlight-selected');
             }
             
-            // Check if within sliding window range
+            
             if (windowRange && idx >= windowRange.start && idx <= windowRange.end) {
                 cell.style.borderColor = 'var(--accent-amber-light)';
                 cell.style.backgroundColor = '#251b0f';
@@ -51,7 +51,7 @@ const Visualizers = {
             wrapper.appendChild(cell);
             wrapper.appendChild(indexLabel);
             
-            // Render pointer names pointing to this index
+            
             const pointerNames = [];
             for (const [name, val] of Object.entries(pointers)) {
                 if (Number(val) === idx) {
@@ -72,9 +72,9 @@ const Visualizers = {
         container.appendChild(arrayContainer);
     },
 
-    // ----------------------------------------------------------------------
-    // 2. 2D Matrix / Grid / DP Table Visualizer
-    // ----------------------------------------------------------------------
+    
+    
+    
     renderMatrix(data, highlights, container) {
         container.innerHTML = '';
         
@@ -87,16 +87,16 @@ const Visualizers = {
         const matrixContainer = document.createElement('div');
         matrixContainer.className = 'matrix-container';
         
-        const active = highlights.active || []; // e.g. [[r, c], ...]
-        const visited = highlights.visited || []; // e.g. [[r, c], ...]
-        const paths = highlights.paths || []; // e.g. [[r, c], ...]
+        const active = highlights.active || []; 
+        const visited = highlights.visited || []; 
+        const paths = highlights.paths || []; 
         
-        // Check array bounds helper
+        
         const coordsMatch = (arr, r, c) => {
             return arr.some(coord => Array.isArray(coord) && coord[0] === r && coord[1] === c);
         };
         
-        // Render Row headers optionally
+        
         matrix.forEach((row, r) => {
             const rowDiv = document.createElement('div');
             rowDiv.className = 'matrix-row';
@@ -123,9 +123,9 @@ const Visualizers = {
         container.appendChild(matrixContainer);
     },
 
-    // ----------------------------------------------------------------------
-    // 3. Tree & Trie Visualizer (Binary Tree, N-ary, Trie TrieNodes)
-    // ----------------------------------------------------------------------
+    
+    
+    
     renderTree(data, highlights, container) {
         container.innerHTML = '';
         
@@ -135,10 +135,10 @@ const Visualizers = {
             return;
         }
 
-        const activeNode = highlights.active || []; // Node IDs or values
+        const activeNode = highlights.active || []; 
         const visitedNodes = highlights.visited || [];
         
-        // SVG dimensions
+        
         const width = 600;
         const height = 350;
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -150,14 +150,14 @@ const Visualizers = {
         const nodes = [];
         const edges = [];
         
-        // Helper to recursively parse binary tree or Trie / N-ary tree
+        
         function parseTree(node, depth, xMin, xMax, parentCoord = null) {
             if (!node) return;
             
             const x = (xMin + xMax) / 2;
             const y = 40 + depth * 70;
             
-            // Generate a unique ID for the node to map highlights
+            
             const nodeId = node.id !== undefined ? String(node.id) : String(node.val !== undefined ? node.val : node.value);
             const nodeVal = node.val !== undefined ? String(node.val) : (node.value !== undefined ? String(node.value) : '?');
             
@@ -168,16 +168,16 @@ const Visualizers = {
                 edges.push({ from: parentCoord, to: currentCoord });
             }
             
-            // Check child nodes (Binary Tree: left/right)
+            
             if (node.left || node.right) {
                 if (node.left) parseTree(node.left, depth + 1, xMin, x, currentCoord);
                 if (node.right) parseTree(node.right, depth + 1, x, xMax, currentCoord);
             }
-            // Check N-ary children
+            
             else if (node.children) {
                 const childrenKeys = Array.isArray(node.children) 
                     ? node.children 
-                    : Object.entries(node.children).map(([k, v]) => ({ val: k, ...v })); // Handle Trie maps
+                    : Object.entries(node.children).map(([k, v]) => ({ val: k, ...v })); 
                 
                 const len = childrenKeys.length;
                 if (len > 0) {
@@ -191,7 +191,7 @@ const Visualizers = {
         
         parseTree(root, 0, 20, width - 20);
 
-        // Draw Edges first (so they sit below nodes)
+        
         edges.forEach(edge => {
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', edge.from.x);
@@ -200,7 +200,7 @@ const Visualizers = {
             line.setAttribute('y2', edge.to.y);
             line.className.baseVal = 'edge-line';
             
-            // Color if traversed
+            
             if (visitedNodes.includes(edge.to.id) && visitedNodes.includes(edge.from.id)) {
                 line.classList.add('visited');
             }
@@ -211,7 +211,7 @@ const Visualizers = {
             svg.appendChild(line);
         });
 
-        // Draw Nodes
+        
         nodes.forEach(node => {
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             g.className.baseVal = 'tree-node-group';
@@ -242,13 +242,13 @@ const Visualizers = {
         container.appendChild(svg);
     },
 
-    // ----------------------------------------------------------------------
-    // 4. Graph Visualizer (Adjacency Lists, Nodes, Traversal)
-    // ----------------------------------------------------------------------
+    
+    
+    
     renderGraph(data, highlights, container) {
         container.innerHTML = '';
         
-        const adj = data.graph || {}; // e.g. { 0: [1, 2], 1: [2] } or standard edges list
+        const adj = data.graph || {}; 
         const keys = Object.keys(adj);
         if (keys.length === 0) {
             container.innerHTML = '<div class="empty-table-message">Empty Graph</div>';
@@ -257,7 +257,7 @@ const Visualizers = {
 
         const activeNode = highlights.active || [];
         const visitedNodes = highlights.visited || [];
-        const activeEdges = highlights.edges || []; // [[u, v], ...]
+        const activeEdges = highlights.edges || []; 
 
         const width = 600;
         const height = 350;
@@ -270,7 +270,7 @@ const Visualizers = {
         const center = { x: width / 2, y: height / 2 };
         const radius = Math.min(width, height) / 2 - 40;
         
-        // Pre-compute circular coordinates for each node
+        
         const coords = {};
         keys.forEach((node, idx) => {
             const angle = (idx / keys.length) * 2 * Math.PI - Math.PI / 2;
@@ -280,12 +280,12 @@ const Visualizers = {
             };
         });
 
-        // Draw Edges
+        
         const drawnEdges = new Set();
         keys.forEach(u => {
             const neighbors = adj[u] || [];
             neighbors.forEach(v => {
-                // Ensure each edge is drawn once for undirected graphs
+                
                 const edgeKey = [u, v].sort().join('-');
                 if (drawnEdges.has(edgeKey)) return;
                 drawnEdges.add(edgeKey);
@@ -298,7 +298,7 @@ const Visualizers = {
                     line.setAttribute('y2', coords[v].y);
                     line.className.baseVal = 'edge-line';
 
-                    // Highlight traversed or active edges
+                    
                     const isEdgeActive = activeEdges.some(e => 
                         (String(e[0]) === String(u) && String(e[1]) === String(v)) ||
                         (String(e[0]) === String(v) && String(e[1]) === String(u))
@@ -316,7 +316,7 @@ const Visualizers = {
             });
         });
 
-        // Draw Nodes
+        
         keys.forEach(node => {
             const coord = coords[node];
             if (!coord) return;
@@ -349,9 +349,9 @@ const Visualizers = {
         container.appendChild(svg);
     },
 
-    // ----------------------------------------------------------------------
-    // 5. Disjoint Sets Visualizer (Union-Find Forests)
-    // ----------------------------------------------------------------------
+    
+    
+    
     renderDisjointSets(data, highlights, container) {
         container.innerHTML = '';
         
@@ -361,8 +361,8 @@ const Visualizers = {
             return;
         }
 
-        // Draw union-find as a forest of trees
-        // Nodes pointing to their parents.
+        
+        
         const width = 600;
         const height = 350;
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -371,10 +371,10 @@ const Visualizers = {
         svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
         svg.style.maxHeight = '350px';
 
-        // We build paths from each node to root to determine forest tree layers.
-        // Then draw parents and children in a simple structure.
+        
+        
         const forestRoots = new Set();
-        const treeChildren = {}; // parent -> children list
+        const treeChildren = {}; 
         
         parent.forEach((p, i) => {
             if (p === i) {
@@ -391,7 +391,7 @@ const Visualizers = {
         const nodesList = [];
         const edgeList = [];
 
-        // Distribute roots along top/middle, then lay out child hierarchies recursively
+        
         const rootsCount = forestRoots.size;
         const rootKeys = Array.from(forestRoots);
         const colWidth = width / (rootsCount + 1);
@@ -419,12 +419,12 @@ const Visualizers = {
             drawUnionNode(root, rx, ry, 1);
         });
 
-        // Add Marker definition for arrows pointing upwards (child -> parent)
+        
         const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
         const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
         marker.setAttribute('id', 'arrow');
         marker.setAttribute('viewBox', '0 0 10 10');
-        marker.setAttribute('refX', '24'); // Stop arrow at edge of node circle
+        marker.setAttribute('refX', '24'); 
         marker.setAttribute('refY', '5');
         marker.setAttribute('markerWidth', '6');
         marker.setAttribute('markerHeight', '6');
@@ -438,7 +438,7 @@ const Visualizers = {
         defs.appendChild(marker);
         svg.appendChild(defs);
 
-        // Draw Union Lines with arrow markers
+        
         edgeList.forEach(edge => {
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', edge.from.x);
@@ -457,7 +457,7 @@ const Visualizers = {
             svg.appendChild(line);
         });
 
-        // Draw Union Nodes
+        
         nodesList.forEach(node => {
             const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             
@@ -484,7 +484,7 @@ const Visualizers = {
             svg.appendChild(g);
         });
 
-        // Also render raw parent array at bottom for comparison
+        
         const bottomArrayWrapper = document.createElement('div');
         bottomArrayWrapper.style.marginTop = '1rem';
         bottomArrayWrapper.style.borderTop = '1px solid var(--border-color)';
@@ -494,17 +494,17 @@ const Visualizers = {
         container.appendChild(svg);
         container.appendChild(bottomArrayWrapper);
         
-        // Render raw array layout underneath Union Find Tree structures
+        
         Visualizers.renderArray({ array: parent }, highlights, bottomArrayWrapper);
     },
 
-    // ----------------------------------------------------------------------
-    // 6. Recursion Tree / Call Stack / Backtracking Visualizer
-    // ----------------------------------------------------------------------
+    
+    
+    
     renderRecursionStack(data, highlights, container) {
         container.innerHTML = '';
         
-        const stack = data.stack || []; // e.g. ["dfs(node=5)", "dfs(node=3)"]
+        const stack = data.stack || []; 
         if (stack.length === 0) {
             container.innerHTML = '<div class="empty-table-message">Stack Empty</div>';
             return;
@@ -512,7 +512,7 @@ const Visualizers = {
 
         const list = document.createElement('div');
         list.style.display = 'flex';
-        list.style.flexDirection = 'column-reverse'; // LIFO order
+        list.style.flexDirection = 'column-reverse'; 
         list.style.gap = '0.5rem';
         list.style.width = '100%';
         list.style.maxWidth = '380px';
@@ -545,10 +545,10 @@ const Visualizers = {
         container.appendChild(list);
     },
 
-    // ----------------------------------------------------------------------
-    // Master Route Renderer
-    // Reads `visuals` metadata and triggers the appropriate component.
-    // ----------------------------------------------------------------------
+    
+    
+    
+    
     draw(visuals, container) {
         if (!visuals || !visuals.type) {
             container.innerHTML = '<div class="empty-table-message">No visual mapping information provided for this step</div>';
