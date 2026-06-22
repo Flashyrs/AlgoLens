@@ -35,7 +35,6 @@ const elements = {
     emptyCanvas: document.getElementById('empty-canvas-message'),
     visualizerCanvas: document.getElementById('visualizer-canvas'),
     typeLabel: document.getElementById('visualizer-type-label'),
-    resetZoom: document.getElementById('reset-zoom-btn'),
     
     timelineSlider: document.getElementById('timeline-slider'),
     stepLabel: document.getElementById('current-step-label'),
@@ -46,7 +45,6 @@ const elements = {
     playBtn: document.getElementById('play-btn'),
     nextBtn: document.getElementById('next-btn'),
     
-    explanationText: document.getElementById('explanation-text'),
     codeViewer: document.getElementById('code-viewer-code'),
     variablesWatch: document.getElementById('variables-watch-tbody'),
     logsContainer: document.getElementById('logs-container'),
@@ -104,10 +102,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     elements.clearLogsBtn.addEventListener('click', () => {
         elements.logsContainer.innerHTML = '';
-    });
-    
-    elements.resetZoom.addEventListener('click', () => {
-        showToast("Zoom reset successfully");
     });
     initResizers();
 });
@@ -622,9 +616,6 @@ function jumpToStep(idx) {
     
     
     Visualizers.draw(step.visuals, elements.visualizerCanvas);
-    
-    
-    elements.explanationText.innerText = step.explanation || "No explanation provided for this step.";
     
     
     const activeLine = document.querySelector('.code-line.active');
