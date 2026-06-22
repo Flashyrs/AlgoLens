@@ -46,17 +46,18 @@ graph TD
 
 ## 💻 Running Locally
 
-Since the application is purely static HTML, CSS, and JS, you can run it locally with any simple file server:
-
-### Python
-```bash
-python -m http.server 8000
-```
-Then navigate to `http://localhost:8000`.
+Since this is a JavaScript-based project, you can run it locally using Node.js/NPX (recommended) or Python:
 
 ### Node.js (npx)
 ```bash
+# Serves the application on http://localhost:3000 (or first available port)
 npx serve .
+```
+
+### Python (Alternative)
+```bash
+# Serves the application on http://localhost:8000
+python -m http.server 8000
 ```
 
 ---
