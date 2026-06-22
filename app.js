@@ -109,6 +109,7 @@ window.addEventListener('DOMContentLoaded', () => {
     elements.resetZoom.addEventListener('click', () => {
         showToast("Zoom reset successfully");
     });
+    initResizers();
 });
 
 
@@ -708,6 +709,10 @@ function updateLogsList(currentIdx, message) {
 
 
 function stepForward() {
+    if (AppState.trace.length === 0) {
+        showToast("No active trace. Transpile and run a testcase first.", true);
+        return;
+    }
     if (AppState.currentStepIdx < AppState.trace.length - 1) {
         jumpToStep(AppState.currentStepIdx + 1);
     } else {
@@ -717,6 +722,10 @@ function stepForward() {
 }
 
 function stepBackward() {
+    if (AppState.trace.length === 0) {
+        showToast("No active trace. Transpile and run a testcase first.", true);
+        return;
+    }
     if (AppState.currentStepIdx > 0) {
         jumpToStep(AppState.currentStepIdx - 1);
     }
@@ -724,6 +733,10 @@ function stepBackward() {
 
 
 function togglePlayback() {
+    if (AppState.trace.length === 0) {
+        showToast("No active trace. Transpile and run a testcase first.", true);
+        return;
+    }
     if (AppState.isPlaying) {
         pausePlayback();
     } else {
@@ -735,12 +748,9 @@ function startPlayback() {
     AppState.isPlaying = true;
     elements.playBtn.querySelector('.play-icon').classList.add('hidden');
     elements.playBtn.querySelector('.pause-icon').classList.remove('hidden');
-    
-    
     if (AppState.currentStepIdx === AppState.trace.length - 1) {
         jumpToStep(0);
     }
-    
     AppState.playbackTimer = setInterval(stepForward, AppState.playbackSpeedMs);
 }
 
@@ -748,9 +758,68 @@ function pausePlayback() {
     AppState.isPlaying = false;
     elements.playBtn.querySelector('.play-icon').classList.remove('hidden');
     elements.playBtn.querySelector('.pause-icon').classList.add('hidden');
-    
     if (AppState.playbackTimer) {
         clearInterval(AppState.playbackTimer);
         AppState.playbackTimer = null;
     }
+}
+
+function initResizers() {
+    const container = document.querySelector('.split-pane-container');
+    const leftPane = document.querySelector('.split-pane-left');
+    const rightPane = document.querySelector('.split-pane-right');
+    const divider = document.querySelector('.split-pane-divider');
+    if (!container || !leftPane || !rightPane || !divider) return;
+    
+    let isDragging = false;
+    
+    divider.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        document.body.style.cursor = 'col-resize';
+        divider.classList.add('dragging');
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const containerRect = container.getBoundingClientRect();
+        const leftWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+        if (leftWidth >= 15 && leftWidth <= 85) {
+            leftPane.style.width = `${leftWidth}%`;
+            rightPane.style.width = `${100 - leftWidth}%`;
+        }
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            document.body.style.cursor = 'default';
+            divider.classList.remove('dragging');
+        }
+    });
+
+    divider.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        divider.classList.add('dragging');
+        e.preventDefault();
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        if (e.touches.length === 0) return;
+        const containerRect = container.getBoundingClientRect();
+        const touchX = e.touches[0].clientX;
+        const leftWidth = ((touchX - containerRect.left) / containerRect.width) * 100;
+        if (leftWidth >= 15 && leftWidth <= 85) {
+            leftPane.style.width = `${leftWidth}%`;
+            rightPane.style.width = `${100 - leftWidth}%`;
+        }
+    });
+
+    document.addEventListener('touchend', () => {
+        if (isDragging) {
+            isDragging = false;
+            divider.classList.remove('dragging');
+        }
+    });
 }
