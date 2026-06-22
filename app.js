@@ -133,8 +133,8 @@ function saveApiKey() {
         updateKeyStatusIndicator(false);
         showToast("API Key cleared", true);
         elements.geminiModel.innerHTML = `
-            <option value="gemini-3.5-flash">Gemini 3.5 Flash</option>
-            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="gemini-3.5-flash">Gemini 3.5 Flash (Free Tier)</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Free Tier)</option>
         `;
     } else {
         localStorage.setItem('algolens_gemini_key', key);
@@ -170,7 +170,18 @@ async function loadAvailableModels() {
                 if (p === 'exp') return 'Experimental';
                 return p.charAt(0).toUpperCase() + p.slice(1);
             });
-            option.innerText = nameParts.join(' ');
+            
+            let tierText = '';
+            const lowerId = modelId.toLowerCase();
+            if (lowerId.includes('flash') || lowerId.includes('lite') || lowerId.includes('nano')) {
+                tierText = ' (Free Tier)';
+            } else if (lowerId.includes('pro')) {
+                tierText = ' (Free / Paid Limits)';
+            } else {
+                tierText = ' (Free)';
+            }
+            
+            option.innerText = nameParts.join(' ') + tierText;
             elements.geminiModel.appendChild(option);
         });
         

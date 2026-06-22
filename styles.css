@@ -517,10 +517,10 @@ body {
     flex: 1;
     display: flex;
     justify-content: flex-start;
-    min-width: 140px;
 }
 
 .toolbar-center {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -531,7 +531,6 @@ body {
     flex: 1;
     display: flex;
     justify-content: flex-end;
-    min-width: 140px;
 }
 
 .speed-control {
@@ -616,12 +615,14 @@ body {
     display: grid;
     grid-template-columns: 1fr 360px;
     gap: 1.5rem;
+    flex-grow: 1;
     min-height: 320px;
 }
 
 /* Code Tracer Panel */
 .code-tracer-card {
-    height: 320px;
+    height: 100%;
+    min-height: 320px;
     border-top: 3px solid var(--border-color);
 }
 
@@ -689,7 +690,8 @@ body {
 }
 
 .variable-watch-card {
-    height: 150px;
+    flex-grow: 1;
+    min-height: 120px;
     border-top: 3px solid var(--border-color);
 }
 
@@ -739,7 +741,8 @@ body {
 
 /* Logs Monitor */
 .log-card {
-    height: 200px;
+    flex-grow: 1.5;
+    min-height: 160px;
     border-top: 3px solid var(--accent-emerald);
 }
 
